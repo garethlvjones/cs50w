@@ -1,0 +1,33 @@
+FLASK SETTINGS
+
+$env:FLASK_APP = "application.py"
+
+$env:DATABASE_URL = "postgres://xmlwcxzllammbl:aed1c92a8510e8a3d7fcd64687ac87760062eab13fe4491563009c7f979c396e@ec2-23-21-195-249.compute-1.amazonaws.com:5432/d710dpa8n04snp"
+
+export DATABASE_URL="postgres://xmlwcxzllammbl:aed1c92a8510e8a3d7fcd64687ac87760062eab13fe4491563009c7f979c396e@ec2-23-21-195-249.compute-1.amazonaws.com:5432/d710dpa8n04snp"
+
+
+Goodreads API
+key: t00295auIVdosK82l8e8Q
+secret: 2L3cJvlwWhXa0Vu4HibKxKL7E65wB3PFQdG9SA
+cs50w_project1
+
+
+Heroku info
+
+https://dashboard.heroku.com/apps/cs50w-project1
+
+Host
+ec2-23-21-195-249.compute-1.amazonaws.com
+Database
+d710dpa8n04snp
+User
+xmlwcxzllammbl
+Port
+5432
+Password
+aed1c92a8510e8a3d7fcd64687ac87760062eab13fe4491563009c7f979c396e
+URI
+postgres://xmlwcxzllammbl:aed1c92a8510e8a3d7fcd64687ac87760062eab13fe4491563009c7f979c396e@ec2-23-21-195-249.compute-1.amazonaws.com:5432/d710dpa8n04snp
+Heroku CLI
+heroku pg:psql postgresql-solid-91230 --app cs50w-project1
