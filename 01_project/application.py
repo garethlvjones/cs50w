@@ -1,7 +1,7 @@
 import os
 import requests
 
-from flask import Flask, session, render_template
+from flask import Flask, session, render_template, request
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -27,8 +27,13 @@ db = scoped_session(sessionmaker(bind=engine))
 # res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": "t00295auIVdosK82l8e8Q", "isbns": "9781632168146"})
 # print(res.json())
 
-
 # Routes
 @app.route("/")
 def index():
     return render_template("index.html")
+
+@app.route("/login", methods=["POST"])
+def login():
+    name = request.form.get("name")
+    passy = request.form.get("password")
+    return render_template("login.html", name=name, passy=passy)

@@ -10,15 +10,20 @@
     <div class="row">
         <div class="col-3"></div>
         <div class="col-3" label="login">
-            <form>
+            <form action="{{ url_for('login') }}" method="post">
                 <input name="name" type="text" placeholder="Name">
                 <input name="password" type="password" placeholder="Password">
+                <button class="btn btn-primary">Log In</button>
             </form>
 
         </div>
 
         <div class="col-3" label="rego">
-            <p>reg here</p>
+            <form>
+                <input name="createName" type="text" placeholder="Name">
+                <input name="createPassword" type="password" placeholder="Password">
+            </form>
+            <button class="btn btn-primary">Create account</button>
         </div>
 
         <div class="col-3"></div>
