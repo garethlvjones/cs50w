@@ -1,4 +1,4 @@
-__pycache__/
-prep/
-../.vscode/
-flask_session/
+/01_project/__pycache__/
+/01_project/prep/
+.vscode/
+/01_project/flask_session/
