@@ -2,4 +2,5 @@
 /01_project/prep/
 .vscode/
 /01_project/flask_session/
+/flask_session/
 .gitignore

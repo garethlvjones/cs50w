@@ -1,7 +1,5 @@
 import os
 import requests
-import json
-import decimal
 
 from flask import Flask, flash, session, render_template, request, redirect, url_for, Markup, abort, jsonify
 from flask_session import Session
@@ -167,20 +165,9 @@ def api(isbn):
 
     apiReturn = db.execute("SELECT books.title, author, year, isbn, COUNT(reviews.rating) AS review_count, ROUND(AVG(reviews.rating), 1) AS average_score FROM books JOIN reviews ON reviews.isbn_ref=books.isbn WHERE isbn = :isbn GROUP BY books.isbn", {"isbn": isbn}).fetchone() 
 
-
-
-
     if apiReturn:
         d = dict(apiReturn.items())
         d['average_score'] = float(d['average_score'])
-        # print(d['average_score'])
-        # return jsonify(json.dumps(d, cls=DecimalEncoder))
         return jsonify(d)
 
     abort(404)
-    
-class DecimalEncoder(json.JSONEncoder):
-    def default(self, o):
-        if isinstance(o, decimal.Decimal):
-            return float(o)
-        return super(DecimalEncoder, self).default(o)
