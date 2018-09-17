@@ -6,14 +6,48 @@
 
 {% block body %}
     <h1>Search</h1>
+    <div class="d-flex flex-row-reverse">
+        <div class="p-2">Logged in as: {{ name }} <br /><a href="/logout">Log out</a></div>
+    </div>
+    
+    <div>        
+        {% if message %}
+        <div class="alert alert-secondary" role="alert">
+            {{ message }}     
+        </div>
+        {% endif %}
 
-
-        <p>{{ session }}</p>
+        <h3>Search for a book</h3> 
+        <div class="container"> 
+            <div class="row">
+                <form action="{{ url_for('search') }}" method="POST">
+                    <input name="isbn" type="text" placeholder="Input ISBN number">
+                    <input name="author" type="text" placeholder="Input Author">
+                    <input name="title" type="text" placeholder="Input title">
+                    <input type="submit" label="Search">
+                </form>
+            </div>        
+        <p>&nbsp;</p>
         
-        <p>{{ message }}</p>
-
-        <a href="/logout">Log out</a>
-
-
+        <table class="table table-bordered table-hover">
+            <thead class="thead-light">
+            <tr>
+                <th>isbn</th>
+                <th>title</th>
+                <th>author</th>
+                <th>year</th>
+            </tr>
+            </thead>
+            {% if books is not none %}
+                {% for book in books %}
+                <tr>
+                    <td>{{ book.isbn }}</td>
+                    <td><a href="/book/{{ book.isbn }}">{{ book.title }}</a></td>
+                    <td>{{ book.author }}</td>
+                    <td>{{ book.year }}</td>
+                </tr>
+                {% endfor %}
+            {% endif %}
+        </table>
     </div>
 {% endblock %}

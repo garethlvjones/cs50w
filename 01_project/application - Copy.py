@@ -106,60 +106,33 @@ def search():
 @app.route("/book/<string:isbn>")
 @login_required
 def book(isbn): 
+
     # to do:
+    #   - check if user has reviewed already
+    #   - Get average score
+    #   - Get number of ratings
+    #   - List all text reviews
     #   - store new score. Allow no text
+    #   - store new text review, optionally
 
     # Get title, author, publication year, ISBN number
     bookDetails = db.execute("SELECT * FROM books WHERE isbn =  :isbn", {"isbn": isbn}).fetchone()
     if (bookDetails is None):
         flash('Invalid isbn')
         return redirect(url_for('search')) 
-
-    # Get reviews that users have left for the book on your website.
-    userReviews = db.execute("SELECT user_id FROM reviews WHERE isbn_ref = :isbn", {"isbn": isbn}).fetchall()
-    userHasReviewed = "no"
-
-    # check if current user has already reviewed
-    for user in userReviews:
-        if session['user_id'] == user[0]:
-            # user has made a review
-            userHasReviewed = "yes"
-
-    # Get average & count of all scores for current book
-    averageScores = db.execute("SELECT AVG(rating), COUNT(rating) FROM reviews WHERE isbn_ref = :isbn", {"isbn": isbn}).fetchone()
-
-    # Get all reviews and usernames of reviewers
-    allReviews = db.execute("SELECT reviews.text, reviews.rating, users.username FROM reviews JOIN users ON reviews.user_id=users.id WHERE isbn_ref = :isbn", {"isbn": isbn}).fetchall()
     
+    # Get reviews that users have left for the book on your website.
+    getReviews = db.execute("SELECT * FROM reviews WHERE isbn_ref = :isbn", {"isbn": isbn}).fetchall()
+
+    # see if userid is in getReviews, i.e. if user has added a review
+
     # Get review widget as json (reviews_widget) from goodreads
     reviews = requests.get("https://www.goodreads.com/book/isbn/", params={"key": KEY, "format": "json", "isbn": {isbn}})
 
-    return render_template("book.html", isbn=bookDetails[0], author=bookDetails[1], title=bookDetails[2], year=bookDetails[3], res=Markup(reviews.json()["reviews_widget"]), name=session['username'], userHasReviewed=userHasReviewed, averageScores=averageScores[0], countScores=averageScores[1], allReviews=allReviews)
 
-@app.route("/addreview/", methods=["POST"])
-@login_required 
+    return render_template("book.html", isbn=bookDetails[0], author=bookDetails[1], title=bookDetails[2], year=bookDetails[3], res=Markup(reviews.json()["reviews_widget"]), name=session['username'], getReviews=getReviews)
+
+@app.route("/book/addreview", methods=["POST"])
+@login_required
 def addreview():
-    reviewText = request.form['textreview']
-    rating = request.form['inlineRadioOptions']
-    isbn = request.form['isbn']
-    user_id = session['user_id']  
-
-    db.execute("INSERT INTO reviews (isbn_ref, user_id, rating, text) VALUES (:isbn_ref, :user_id, :rating, :reviewText)", {"isbn_ref": isbn, "user_id": user_id, "rating": rating, "reviewText": reviewText})
-    db.commit()
-    return redirect(url_for('book', isbn=isbn)) 
-
-@app.route("/api/<string:isbn>")
-def api(isbn):
-    """
-    API Access: If users make a GET request to your website’s /api/<isbn> route, where <isbn> is an ISBN number, your website should return a JSON response containing the book’s title, author, publication date, ISBN number, review count, and average score. The resulting JSON should follow the format:
-    {
-        "title": "Memory",
-        "author": "Doug Lloyd",
-        "year": 2015,
-        "isbn": "1632168146",
-        "review_count": 28,
-        "average_score": 5.0
-    }
-    If the requested ISBN number isn’t in your database, your website should return a 404 error.
-    """
     pass

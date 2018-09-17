@@ -1,0 +1,80 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Book details
+{% endblock %}
+
+{% block body %}
+    <h1>Book Details</h1>
+    <div class="d-flex flex-row-reverse">
+        <div class="p-2">Logged in as: {{ name }} <br /><a href="/logout">Log out</a></div>
+    </div>
+
+    <div>
+        Title: {{ title }}<br />
+        Author: {{ author }}<br />
+        Year: {{ year }}<br />
+        ISBN: {{ isbn }}
+    </div>
+    <br />
+    
+    {% if averageScores is not none %}
+    <div>
+        Average user score ({{ countScores }} reviews): {{ '%0.1f'| format(averageScores) }}
+    </div>
+    {% endif %}
+
+    {% if allReviews is not none %}
+    <div>
+        {% for review in allReviews %}
+        <p>Reviewer: {{ review[2] }}<br />
+        Rating: {{ review[1] }}<br />
+            {% if review[0] == "4" %}
+            Review: {{ review[0] }}</p>
+            {% endif %}
+        {% endfor %}
+    </div>
+    {% endif %}
+
+
+
+    {% if userHasReviewed == "no" %}
+    <h3>Add Your review</h3>
+    <div> 
+        <form action="{{ url_for('addreview') }}" method="post">
+            <input id="isbn" name="isbn" type="hidden" value="{{ isbn }}">
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="1">
+                <label class="form-check-label" for="inlineRadio1">1 star</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="2">
+                <label class="form-check-label" for="inlineRadio2">2 stars</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio3" value="3">
+                <label class="form-check-label" for="inlineRadio3">3 stars</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio3" value="4">
+                <label class="form-check-label" for="inlineRadio3">4 stars</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio3" value="5">
+                <label class="form-check-label" for="inlineRadio3">5 stars</label>
+            </div>
+
+            <div class="form-group">
+                <label for="textreview">Enter a review</label>
+                <textarea class="form-control" name="textreview" id="textreview" rows="3"></textarea>
+            </div>
+            <button class="btn btn-primary">Add review</button>
+        </form>
+    </div>
+    {% endif %}
+
+    <br /><br />
+
+    {{ res }}
+
+{% endblock %}
