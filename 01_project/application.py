@@ -1,7 +1,9 @@
 import os
 import requests
+import json
+import decimal
 
-from flask import Flask, flash, session, render_template, request, redirect, url_for, Markup
+from flask import Flask, flash, session, render_template, request, redirect, url_for, Markup, abort, jsonify
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -130,7 +132,7 @@ def book(isbn):
 
     # Get all reviews and usernames of reviewers
     allReviews = db.execute("SELECT reviews.text, reviews.rating, users.username FROM reviews JOIN users ON reviews.user_id=users.id WHERE isbn_ref = :isbn", {"isbn": isbn}).fetchall()
-    
+
     # Get review widget as json (reviews_widget) from goodreads
     reviews = requests.get("https://www.goodreads.com/book/isbn/", params={"key": KEY, "format": "json", "isbn": {isbn}})
 
@@ -162,4 +164,23 @@ def api(isbn):
     }
     If the requested ISBN number isn’t in your database, your website should return a 404 error.
     """
-    pass
+
+    apiReturn = db.execute("SELECT books.title, author, year, isbn, COUNT(reviews.rating) AS review_count, ROUND(AVG(reviews.rating), 1) AS average_score FROM books JOIN reviews ON reviews.isbn_ref=books.isbn WHERE isbn = :isbn GROUP BY books.isbn", {"isbn": isbn}).fetchone() 
+
+
+
+
+    if apiReturn:
+        d = dict(apiReturn.items())
+        d['average_score'] = float(d['average_score'])
+        # print(d['average_score'])
+        # return jsonify(json.dumps(d, cls=DecimalEncoder))
+        return jsonify(d)
+
+    abort(404)
+    
+class DecimalEncoder(json.JSONEncoder):
+    def default(self, o):
+        if isinstance(o, decimal.Decimal):
+            return float(o)
+        return super(DecimalEncoder, self).default(o)

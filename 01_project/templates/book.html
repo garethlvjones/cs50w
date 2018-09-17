@@ -29,7 +29,7 @@
         {% for review in allReviews %}
         <p>Reviewer: {{ review[2] }}<br />
         Rating: {{ review[1] }}<br />
-            {% if review[0] == "4" %}
+            {% if review[0] != "" %}
             Review: {{ review[0] }}</p>
             {% endif %}
         {% endfor %}
