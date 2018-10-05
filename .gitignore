@@ -1,6 +1,5 @@
-/01_project/__pycache__/
+*/__pycache__/
 /01_project/prep/
+/01_project/lec4_source/
 .vscode/
-/01_project/flask_session/
-/flask_session/
-.gitignore
+*/flask_session/

@@ -5,42 +5,58 @@
 {% endblock %}
 
 {% block body %}
-    <h1>Book Details</h1>
-    <div class="d-flex flex-row-reverse">
-        <div class="p-2">Logged in as: {{ name }} <br /><a href="/logout">Log out</a></div>
+<h1>{{ localBookInfo.title }}</h1>
+
+<div class="container-fluid">
+    <div class="row" style="padding: 20px">
+        <div class="col-sm-3"><a href="/search"><< Book Search</a></div>
+        <div class="col-sm-6"></div>
+        <div class="col-sm-3">Logged in as: {{ name }}<br /><a href="/logout">Log out</a></div>
     </div>
 
-    <div>
-        Title: {{ title }}<br />
-        Author: {{ author }}<br />
-        Year: {{ year }}<br />
-        ISBN: {{ isbn }}
+    <div class="row" style="text-align: center;padding: 20px;">
+        <div class="col-sm-4">Title <br/>{{ localBookInfo.title }}</div>
+        <div class="col-sm-4">Author<br />{{ localBookInfo.author }}</div>
+        <div class="col-sm-2">Year<br />{{ localBookInfo.year }}</div>
+        <div class="col-sm-2">ISBN<br />{{ localBookInfo.isbn }}</div>
     </div>
-    <br />
-    
-    {% if averageScores is not none %}
-    <div>
-        Average user score ({{ countScores }} reviews): {{ '%0.1f'| format(averageScores) }}
-    </div>
-    {% endif %}
 
-    {% if allReviews is not none %}
-    <div>
-        {% for review in allReviews %}
-        <p>Reviewer: {{ review[2] }}<br />
-        Rating: {{ review[1] }}<br />
-            {% if review[0] != "" %}
-            Review: {{ review[0] }}</p>
+    <div class="row" style="padding: 20px">
+        <div class="col-sm-6">
+            {% if localBookInfo.average_score %}
+                <strong>Local Average Rating:</strong> {{ '%0.1f'| format(localBookInfo.average_score) }} ({{ localBookInfo.review_count }} reviews)
+            {% else %}
+                <strong>No local reviews yet</strong>
             {% endif %}
-        {% endfor %}
+        </div>
+        <div class="col-sm-6">
+            <strong>Goodreads Average Rating:</strong> {{ goodreads.average_rating }} ({{ goodreads.ratings_count }} reviews)
+        </div>
     </div>
+
+    <div class="row">
+    {% if allReviews %}
+    <h5>User Reviews</h5>
+        {% for review in allReviews %}
+            {% if review[2] == name %}
+        <div class="container-fluid" style="border:1px solid #cecece;">
+            <p>Reviewer: <strong>You!</strong><br />
+            {% else %}
+        <div class="container-fluid">
+            <p>Reviewer: {{ review[2] }}<br />
+            {% endif %}
+    
+    Rating: {{ review[1] }}<br />
+            {% if review[0] != "" %}
+        Review: {{ review[0] }}</p>
+            {% endif %}
+    </div>
+        {% endfor %}
     {% endif %}
 
-
-
-    {% if userHasReviewed == "no" %}
-    <h3>Add Your review</h3>
-    <div> 
+{% if userHasReviewed == "no" %}
+<div class="col-sm-8">
+    <h5>Add Your review</h5>
         <form action="{{ url_for('addreview') }}" method="post">
             <input id="isbn" name="isbn" type="hidden" value="{{ isbn }}">
             <div class="form-check form-check-inline">
@@ -71,10 +87,10 @@
             <button class="btn btn-primary">Add review</button>
         </form>
     </div>
-    {% endif %}
+{% endif %}
 
-    <br /><br />
 
-    {{ res }}
+</div>
+
 
 {% endblock %}

@@ -1,0 +1,7 @@
+MAC
+export FLASK_APP=application.py
+flask run
+
+PC
+set FLASK_APP=application.py
+flask run

@@ -28,7 +28,7 @@
                 </form>
             </div>        
         <p>&nbsp;</p>
-        
+        {% if books %}
         <table class="table table-bordered table-hover">
             <thead class="thead-light">
             <tr>
@@ -38,7 +38,6 @@
                 <th>year</th>
             </tr>
             </thead>
-            {% if books is not none %}
                 {% for book in books %}
                 <tr>
                     <td>{{ book.isbn }}</td>
@@ -47,7 +46,7 @@
                     <td>{{ book.year }}</td>
                 </tr>
                 {% endfor %}
-            {% endif %}
+        {% endif %}
         </table>
     </div>
 {% endblock %}

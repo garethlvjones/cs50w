@@ -1,2 +1,0 @@
-- General redirects
-- post-login, send to search not back to index

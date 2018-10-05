@@ -11,6 +11,8 @@ from functools import wraps
 app = Flask(__name__)
  
 KEY="t00295auIVdosK82l8e8Q"
+os.environ['no_proxy'] = '127.0.0.1,localhost'
+
 
 def login_required(f):
     @wraps(f)
@@ -106,35 +108,25 @@ def search():
 @app.route("/book/<string:isbn>")
 @login_required
 def book(isbn): 
-    # to do:
-    #   - store new score. Allow no text
 
-    # Get title, author, publication year, ISBN number
-    bookDetails = db.execute("SELECT * FROM books WHERE isbn =  :isbn", {"isbn": isbn}).fetchone()
-    if (bookDetails is None):
-        flash('Invalid isbn')
-        return redirect(url_for('search')) 
-
-    # Get reviews that users have left for the book on your website.
-    userReviews = db.execute("SELECT user_id FROM reviews WHERE isbn_ref = :isbn", {"isbn": isbn}).fetchall()
-    userHasReviewed = "no"
-
-    # check if current user has already reviewed
-    for user in userReviews:
-        if session['user_id'] == user[0]:
-            # user has made a review
-            userHasReviewed = "yes"
-
-    # Get average & count of all scores for current book
-    averageScores = db.execute("SELECT AVG(rating), COUNT(rating) FROM reviews WHERE isbn_ref = :isbn", {"isbn": isbn}).fetchone()
+    # Get title, author, publication year, ISBN number BY USING MY OWN API OH WOW
+    apiURL = "http://localhost:5000/api/" + isbn
+    
+    localBookInfo = requests.get(apiURL).json()
 
     # Get all reviews and usernames of reviewers
     allReviews = db.execute("SELECT reviews.text, reviews.rating, users.username FROM reviews JOIN users ON reviews.user_id=users.id WHERE isbn_ref = :isbn", {"isbn": isbn}).fetchall()
 
-    # Get review widget as json (reviews_widget) from goodreads
-    reviews = requests.get("https://www.goodreads.com/book/isbn/", params={"key": KEY, "format": "json", "isbn": {isbn}})
+    # Check if current user has already reviewed
+    userHasReviewed = "no"
+    for review in allReviews:
+        if session['username'] == review[2]:
+            userHasReviewed = "yes"
 
-    return render_template("book.html", isbn=bookDetails[0], author=bookDetails[1], title=bookDetails[2], year=bookDetails[3], res=Markup(reviews.json()["reviews_widget"]), name=session['username'], userHasReviewed=userHasReviewed, averageScores=averageScores[0], countScores=averageScores[1], allReviews=allReviews)
+    # Get goodreads review numbers and avgs
+    goodreads = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": KEY, "isbns": isbn}).json()
+
+    return render_template("book.html", name=session['username'], userHasReviewed=userHasReviewed, allReviews=allReviews, localBookInfo=localBookInfo, goodreads=goodreads['books'][0])
 
 @app.route("/addreview/", methods=["POST"])
 @login_required 
@@ -148,7 +140,7 @@ def addreview():
     db.commit()
     return redirect(url_for('book', isbn=isbn)) 
 
-@app.route("/api/<string:isbn>")
+@app.route("/api/<string:isbn>", methods=["GET"])
 def api(isbn):
     """
     API Access: If users make a GET request to your website’s /api/<isbn> route, where <isbn> is an ISBN number, your website should return a JSON response containing the book’s title, author, publication date, ISBN number, review count, and average score. The resulting JSON should follow the format:
@@ -162,12 +154,26 @@ def api(isbn):
     }
     If the requested ISBN number isn’t in your database, your website should return a 404 error.
     """
+    # first see if there are local reviews for the book 
+    hasReview = db.execute("SELECT isbn_ref FROM reviews WHERE isbn_ref = :isbn", {"isbn": isbn}).fetchone()
 
-    apiReturn = db.execute("SELECT books.title, author, year, isbn, COUNT(reviews.rating) AS review_count, ROUND(AVG(reviews.rating), 1) AS average_score FROM books JOIN reviews ON reviews.isbn_ref=books.isbn WHERE isbn = :isbn GROUP BY books.isbn", {"isbn": isbn}).fetchone() 
-
-    if apiReturn:
+    # if there are reviews, do joined get for return
+    if hasReview:
+        apiReturn = db.execute("SELECT books.title, books.author, books.year, books.isbn, COUNT(reviews.rating) AS review_count, ROUND(AVG(reviews.rating), 1) AS average_score FROM books JOIN reviews ON reviews.isbn_ref=books.isbn WHERE isbn = :isbn GROUP BY books.isbn", {"isbn": isbn}).fetchone()
+        # do silly number formatting stuff
         d = dict(apiReturn.items())
         d['average_score'] = float(d['average_score'])
         return jsonify(d)
+    
+    # else just get book info
+    apiReturn = db.execute("SELECT * FROM books WHERE isbn = :isbn", {"isbn": isbn}).fetchone()
 
+    # if there's something there, return it as json  
+    if apiReturn:
+        d = dict(apiReturn.items())
+        # d['average_score'] = 0.0  Better to just not include this if no reviews
+        # d['review_count'] = 0     Better to just not include this if no reviews
+        return jsonify(d)
+
+    # else if no book found, return 404
     abort(404)
