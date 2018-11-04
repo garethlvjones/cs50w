@@ -1,7 +1,12 @@
 MAC
-export FLASK_APP=application.py
+export FLASK_APP="application.py"
+export FLASK_ENV="development"
 flask run
 
 PC
-set FLASK_APP=application.py
+
+
+$env:DATABASE_URL = "postgres://xmlwcxzllammbl:aed1c92a8510e8a3d7fcd64687ac87760062eab13fe4491563009c7f979c396e@ec2-23-21-195-249.compute-1.amazonaws.com:5432/d710dpa8n04snp"
+$env:FLASK_ENV="development"
+$env:FLASK_APP = "application.py"
 flask run
