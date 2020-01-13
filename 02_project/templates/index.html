@@ -4,9 +4,43 @@
     Project 2
 {% endblock %}
 
-{% block body %}
-        <p>Hello world 2</p>
+{% block head %}
+<!-- <script src="{{ url_for('static', filename='index.js') }}"></script> -->
+{% endblock %}
 
+
+{% block body %}
+<!-- Body stuff goes here -->
+<h1>Flack</h1>
+
+    <div id="createUsername" class="collapse">
+        <form id="createUsernameForm">
+            <input id="createUsernameText" autocomplete="off" autofocus placeholder="Create Username" type="text">
+            <input id="createUsernameButton" type="submit" value="Submit">
+        </form>
+    </div>
+
+    <div id="helloUsername"></div>
+
+    <div><button id="killUsername">Kill name</button></div>
+    
+    <br />
+    <!-- show existing room list (if rooms exist), allow select -->
+    <h4>Rooms List</h4>
+    <div><ul id="rooms-list"></ul></div>
+
+    <br />
+
+    <!-- input new room list -->
+    <form id="new-room">
+        <input id="room-name" autocomplete="off" autofocus placeholder="Choose Room Name" type="text">
+        <input id="room-name-button" type="submit" value="Create">
+    </form>
+    
+    <br /><br />
+
+    <div id="room-dfg"></div>
+    
 
 
 {% endblock %}

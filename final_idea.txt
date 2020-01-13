@@ -1,0 +1,1 @@
+Use Mailchimp API (and Facebook API?) to grab data for final project from tkbb/aidt

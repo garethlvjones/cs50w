@@ -1,96 +1,20 @@
-{% extends "layout.html" %}
++{% extends "layout.html" %}
 
 {% block title %}
     Book details
 {% endblock %}
 
 {% block body %}
-<h1>{{ localBookInfo.title }}</h1>
+    <h1>Book Details</h1>
 
-<div class="container-fluid">
-    <div class="row" style="padding: 20px">
-        <div class="col-sm-3"><a href="/search"><< Book Search</a></div>
-        <div class="col-sm-6"></div>
-        <div class="col-sm-3">Logged in as: {{ name }}<br /><a href="/logout">Log out</a></div>
+    <p>hello</p>
+
+    <p>{{ name }}</p>
+
+    <p>{{ passy }} </p>
+        
+    <style> #goodreads-widget { font-family: georgia, serif; padding: 18px 0; width:565px; } #goodreads-widget h1 { font-weight:normal; font-size: 16px; border-bottom: 1px solid #BBB596; margin-bottom: 0; } #goodreads-widget a { text-decoration: none; color:#660; } iframe{ background-color: #fff; } #goodreads-widget a:hover { text-decoration: underline; } #goodreads-widget a:active { color:#660; } #gr_footer { width: 100%; border-top: 1px solid #BBB596; text-align: right; } #goodreads-widget .gr_branding{ color: #382110; font-size: 11px; text-decoration: none; font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; } </style> <div id="goodreads-widget"> <div id="gr_header"><h1><a rel="nofollow" href="https://www.goodreads.com/book/show/53732.Dune">Dune Reviews</a></h1></div> <iframe id="the_iframe" src="https://www.goodreads.com/api/reviews_widget_iframe?did=DEVELOPER_ID&amp;format=html&amp;isbn=0441172717&amp;links=660&amp;min_rating=&amp;review_back=fff&amp;stars=000&amp;text=000" width="565" height="400" frameborder="0"></iframe> <div id="gr_footer"> <a class="gr_branding" target="_blank" rel="nofollow" href="https://www.goodreads.com/book/show/53732.Dune?utm_medium=api&amp;utm_source=reviews_widget">Reviews from Goodreads.com</a> </div> </div>
+
+
     </div>
-
-    <div class="row" style="text-align: center;padding: 20px;">
-        <div class="col-sm-4">Title <br/>{{ localBookInfo.title }}</div>
-        <div class="col-sm-4">Author<br />{{ localBookInfo.author }}</div>
-        <div class="col-sm-2">Year<br />{{ localBookInfo.year }}</div>
-        <div class="col-sm-2">ISBN<br />{{ localBookInfo.isbn }}</div>
-    </div>
-
-    <div class="row" style="padding: 20px">
-        <div class="col-sm-6">
-            {% if localBookInfo.average_score %}
-                <strong>Local Average Rating:</strong> {{ '%0.1f'| format(localBookInfo.average_score) }} ({{ localBookInfo.review_count }} reviews)
-            {% else %}
-                <strong>No local reviews yet</strong>
-            {% endif %}
-        </div>
-        <div class="col-sm-6">
-            <strong>Goodreads Average Rating:</strong> {{ goodreads.average_rating }} ({{ goodreads.ratings_count }} reviews)
-        </div>
-    </div>
-
-    <div class="row">
-    {% if allReviews %}
-    <h5>User Reviews</h5>
-        {% for review in allReviews %}
-            {% if review[2] == name %}
-        <div class="container-fluid" style="border:1px solid #cecece;">
-            <p>Reviewer: <strong>You!</strong><br />
-            {% else %}
-        <div class="container-fluid">
-            <p>Reviewer: {{ review[2] }}<br />
-            {% endif %}
-    
-    Rating: {{ review[1] }}<br />
-            {% if review[0] != "" %}
-        Review: {{ review[0] }}</p>
-            {% endif %}
-    </div>
-        {% endfor %}
-    {% endif %}
-
-{% if userHasReviewed == "no" %}
-<div class="col-sm-8">
-    <h5>Add Your review</h5>
-        <form action="{{ url_for('addreview') }}" method="post">
-            <input id="isbn" name="isbn" type="hidden" value="{{ isbn }}">
-            <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="1">
-                <label class="form-check-label" for="inlineRadio1">1 star</label>
-            </div>
-            <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="2">
-                <label class="form-check-label" for="inlineRadio2">2 stars</label>
-            </div>
-            <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio3" value="3">
-                <label class="form-check-label" for="inlineRadio3">3 stars</label>
-            </div>
-            <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio3" value="4">
-                <label class="form-check-label" for="inlineRadio3">4 stars</label>
-            </div>
-            <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio3" value="5">
-                <label class="form-check-label" for="inlineRadio3">5 stars</label>
-            </div>
-
-            <div class="form-group">
-                <label for="textreview">Enter a review</label>
-                <textarea class="form-control" name="textreview" id="textreview" rows="3"></textarea>
-            </div>
-            <button class="btn btn-primary">Add review</button>
-        </form>
-    </div>
-{% endif %}
-
-
-</div>
-
-
 {% endblock %}

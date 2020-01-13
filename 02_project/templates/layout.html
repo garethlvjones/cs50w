@@ -6,36 +6,19 @@
         <meta charset="utf-8">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css" integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy" crossorigin="anonymous">
 
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+        <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js" integrity="sha256-yr4fRk/GU1ehYJPAs8P4JlTgu0Hdsp4ZKrx8bDEDC3I=" crossorigin="anonymous"></script>
+        <script src="{{ url_for('static', filename='common.js') }}"></script>
+
+        {% block head %}
+        {% endblock %}
+        
     </head>
     <body>
-        <div class="container">
-            <div>
-            {% with messages = get_flashed_messages() %}
-                {% if messages %}
-                <ul class=flashes>
-                    {% for message in messages %}
-                    <li class="list-group-item list-group-item-primary">{{ message }}</li>
-                    {% endfor %}
-                </ul>
-                {% endif %}
-            {% endwith %}
-            </div>
-        
 
-            {% block topheader %}
-            <!-- Username info goes here -->
-            <!-- 
-            check to see if a username is in local storage
-            if yes, say hello
-                also, offer way to 'log out' and use different username
-            if no, ask for username
-                socket a username storage, and refresh with new info -->
-            
-            {% endblock %}
 
             {% block body %}
-            <!-- Body stuff goes here -->
+
             {% endblock %}
 
 

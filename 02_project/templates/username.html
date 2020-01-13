@@ -1,0 +1,24 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Project 2: Create username
+{% endblock %}
+
+{% block head %}
+<script src="{{ url_for('static', filename='username.js') }}"></script>
+{% endblock %}
+
+{% block body %}
+<!-- Body stuff goes here -->
+<h1>Flack: Create username</h1>
+
+<div id="usernameDoes"></div>
+<br />
+<div id="createUsername">
+    <form id="createUsernameForm">
+        <input id="createUsernameText" autocomplete="off" autofocus placeholder="Create Username" type="text">
+        <input id="createUsernameButton" type="submit" value="Submit">
+    </form>
+</div>
+
+{% endblock %}

@@ -1,0 +1,1 @@
+javascript:(function(){ $('table.post').filter(function() { return $(this).find('.postbody > div.tweet, .postbody > img:not([src*="somethingawful.com"]), .postbody > a:not([href*="somethingawful.com"]), .postbody > .timg_container > img:not([src*="somethingawful.com"])').length === 0 }).hide() })()
