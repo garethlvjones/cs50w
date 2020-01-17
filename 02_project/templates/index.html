@@ -1,46 +1,54 @@
-{% extends "layout.html" %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>{% block title %}Flack{% endblock %}</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css" integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy" crossorigin="anonymous">
 
-{% block title %}
-    Project 2
-{% endblock %}
+        <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+        <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js" integrity="sha256-yr4fRk/GU1ehYJPAs8P4JlTgu0Hdsp4ZKrx8bDEDC3I=" crossorigin="anonymous"></script>
+        <script src="{{ url_for('static', filename='common.js') }}"></script>
 
-{% block head %}
-<!-- <script src="{{ url_for('static', filename='index.js') }}"></script> -->
-{% endblock %}
-
-
-{% block body %}
-<!-- Body stuff goes here -->
-<h1>Flack</h1>
-
-    <div id="createUsername" class="collapse">
-        <form id="createUsernameForm">
-            <input id="createUsernameText" autocomplete="off" autofocus placeholder="Create Username" type="text">
-            <input id="createUsernameButton" type="submit" value="Submit">
-        </form>
+        {% block head %}
+        {% endblock %}
+        
+    </head>
+    <body>
+    {% block top_container %}
+    <div class="container-fluid border">
+        <div class="row">
+            <div class="col-sm-8"><h1>Flack</h1></div>
+            <div class="col-sm-4">
+                <div id="helloUsername"></div> 
+                <button class="btn btn-link" id="killUsername">Kill name</button>
+            </div>
+        </div>
     </div>
+    {% endblock %}
 
-    <div id="helloUsername"></div>
+    {% block nav %}
+    <div class="wrapper">
 
-    <div><button id="killUsername">Kill name</button></div>
-    
-    <br />
-    <!-- show existing room list (if rooms exist), allow select -->
-    <h4>Rooms List</h4>
-    <div><ul id="rooms-list"></ul></div>
+        <!-- Sidebar -->
+        <nav id="sidebar" class="border flex-column">
+            <ul id="rooms-list" class="list-group list-group-flush"></ul>
+            
+            <!-- input new room list -->
+            <form id="new-room">
+                <input id="room-name" autocomplete="off" autofocus placeholder="Choose Room Name" type="text">
+                <input id="room-name-button" type="submit" value="Create">
+            </form>
+        </nav>
+        {% endblock %}
 
-    <br />
+        {% block body %}
 
-    <!-- input new room list -->
-    <form id="new-room">
-        <input id="room-name" autocomplete="off" autofocus placeholder="Choose Room Name" type="text">
-        <input id="room-name-button" type="submit" value="Create">
-    </form>
-    
-    <br /><br />
-
-    <div id="room-dfg"></div>
-    
+        {% endblock %}
+    </div> <!-- close wrapper -->
+        
 
 
-{% endblock %}
+
+    </body>
+</html>

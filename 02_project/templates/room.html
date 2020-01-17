@@ -11,34 +11,22 @@
 
 {% block body %}
 <!-- Body stuff goes here -->
-<h1>Flack</h1>
-{% if roomName %}
-<h2>Room {{ roomName }}</h2>
-{% else %}
-<h2>Something's gone wrong! </h2>
-{% endif %}
+<div class="container-fluid">
+    <div class="row">
+        <ul id="chat-list">
+            <!-- will be filled with chat lines -->
+        </ul>
+    </div>
 
-<div id="helloUsername"></div>
-<div>
-    <button id="killUsername">Kill name</button>
-</div>
 
-<!-- show existing room list (if rooms exist), allow select -->
-<h4>Rooms List</h4>
-<div><ul id="rooms-list"></ul></div>
+    <div class="row">
+        <form id="chat">
+            <input id="chat-out" autocomplete="off" autofocus placeholder="Enter message" type="text">
+            <input id="chat-form-button" type="submit" value="Speak it">
+        </form>
+    </div>
 
-<br /><br />
-<div>
-    <ul id="chat-list">
-        <!-- will be filled with chat lines -->
-    </ul>
-</div>
-
-<form id="chat">
-    <input id="chat-out" autocomplete="off" autofocus placeholder="Enter message" type="text">
-    <input id="chat-form-button" type="submit" value="Speak it">
-</form>
-<div id="joiner"></div>
+<div id="joiner" class="container-fluid"></div>
 
 
 {% endblock %}

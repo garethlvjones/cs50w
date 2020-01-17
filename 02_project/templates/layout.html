@@ -15,13 +15,36 @@
         
     </head>
     <body>
-
-
-            {% block body %}
-
-            {% endblock %}
-
-
+    {% block top_container %}
+    <div class="container-fluid border">
+        <div class="row">
+            <div class="col-sm-8"><h1>Flack</h1></div>
+            <div class="col-sm-4">
+                <div id="helloUsername"></div> 
+                <button class="btn btn-link" id="killUsername">Kill name</button>
+            </div>
         </div>
+    </div>
+    {% endblock %}
+
+    <div class="wrapper">
+
+        <!-- Sidebar -->
+        <nav id="sidebar" class="border flex-column">
+            <ul id="rooms-list" class="list-group list-group-flush"></ul>
+            
+            <!-- input new room list -->
+            <form id="new-room">
+                <input id="room-name" autocomplete="off" autofocus placeholder="Choose Room Name" type="text">
+                <input id="room-name-button" type="submit" value="Create">
+            </form>
+        </nav>
+        {% block body %}
+        {% endblock %}
+    </div> <!-- close wrapper -->
+        
+
+
+
     </body>
 </html>

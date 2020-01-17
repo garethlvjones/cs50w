@@ -1,4 +1,4 @@
-import os, random, string, json
+import os, random, string
 import time
 from room import Room
 
@@ -21,10 +21,13 @@ socketio = SocketIO(app)
 
 ######
 # TODO:
+#     - stay within one url, single page app. hash roomname and #
+#     - owner can kill room
+#     - format current room using bootstrap
 #     - format date nicely
 #     - format page nicely
-#         - cells for name/chat/time?
 #         - show current time
+#     - remove 'blah entered the room' after a while
 #     - Login using flask login (adding to localstorage just for show)
 #     - clean up forms. Stop blank enters, click twice, etc
 #     - maybe private chat option
@@ -96,11 +99,6 @@ def doesRoomExist(roomName):
         return True
     return False
 
-    # for r in roomsDict:
-    #     if (r.getName() == roomName):
-    #         return True
-    # return False
-
 @socketio.on('create room')
 # only called when existing room check has previously been made, so can assume room doesn't exist
 def createRoom(json):
@@ -108,10 +106,11 @@ def createRoom(json):
     username = json['username']
 
     # create room object
-    room = Room(roomName,username)
-    
+    newRoom = Room(roomName,username)
+
     # add roomname to roomslist dict & broadcast new room for list
-    roomsDict[roomName] = room
+    roomsDict[roomName] = newRoom
+    emit('update room list', broadcast=True)
     # TODO BROADCAST ROOM UPATE
 
 @socketio.on('join room')
@@ -124,15 +123,13 @@ def joinRoom(data):
 ##########################
 
 @socketio.on('show current chats')
-def showCurrentChats(roomName):
+def showCurrentChats(room):
     # get room object
-    currentRoom = roomsDict[roomName]
+    # currentRoom = roomsDict[room['data']]
 
     # get all chats from room
-    list = currentRoom.getChatsList() 
-    print(list)
-    print(type(list))
-    
+    list = roomsDict[room['data']].getChatsList() 
+
     # TODO get chats for room
     # emit('get all', {'data': chatsList})
     return list
@@ -140,11 +137,11 @@ def showCurrentChats(roomName):
 @socketio.on('new chat')
 # data is a dict in the form {'username': username, 'chat': newLine, 'roomName': roomName}
 def appendChat(data):
-    # get room object
+    # create reference to room object
     currentRoom = roomsDict[data['roomName']]
-
+    
     # call addChat and add line
     currentRoom.addChat(data)
 
     # Broadcast clients in room to append the new line, rather than re-do whole list each time
-    emit('new line', list(currentRoom.getLatestChatsList()), room=data['roomName'])
+    emit('new line', list(currentRoom.getLastChatLine()), room=data['roomName'])

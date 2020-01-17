@@ -1,15 +1,15 @@
 document.addEventListener('DOMContentLoaded', () => {
     var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
-
+    
     /****************************
         USERNAME STUFF
     */
-    // Check for username in localstorage. If no, send to create page
+    // Check for username in localstorage. If no, fill middle area with username field
     if (!localStorage.getItem('username')) {
-        window.location.assign('username');
+        // TODO: FILL BODY WITH USERNAME STUFF
     } else {
         // say hello to user
-        let hello = document.createElement('h3');
+        let hello = document.createElement('p');
         hello.innerHTML = 'Hello ' + localStorage.getItem('username');
         document.getElementById('helloUsername').appendChild(hello);
     }
@@ -17,13 +17,20 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('killUsername').onclick = () => {
         localStorage.removeItem('username');
         // send them to create new username
-        window.location.assign('username');
+        // TODO: UPDATE BODY AREA WITH USERNAME STUFF
     };
     
     /****************************
-        ROOM STUFF
+        ROOM/NAV STUFF
     */
+
     socket.on('connect', () => {
+        socket.emit('show rooms', (data) => {
+            updateRoomList(data);
+        });
+    });
+
+    socket.on('update room list', () => {
         socket.emit('show rooms', (data) => {
             updateRoomList(data);
         });
@@ -57,6 +64,9 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 });
 
+/****************************
+    GENERAL FUNCTIONS
+*/
 function updateRoomList(data) {
     if (data === "empty") {
         document.getElementById('rooms-list').innerHTML = "No rooms yet. Create one!";
@@ -66,10 +76,14 @@ function updateRoomList(data) {
         // let json = JSON.parse(data);
         data.forEach(element => {
             let li = document.createElement('li');
-            // TODO: Check for current room name, don't make it a link 
-            li.innerHTML = '<a href="/rooms/' + element + '">' + element + '</a>';
-            li.id = element;
+            li.innerHTML = '<a class="nav-link list-group-item" id=' + element + ' href="/rooms/' + element + '">' + element + '</a>';
+            // if in room, set that nav item to be disabled
             document.getElementById('rooms-list').appendChild(li);
+            if (roomName) {
+                console.log('trying to delink room');
+                console.log(roomName);
+                document.getElementById(roomName).classList.add('disabled');
+            }
         });
     }
 }
