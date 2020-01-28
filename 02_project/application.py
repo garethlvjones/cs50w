@@ -21,8 +21,9 @@ socketio = SocketIO(app)
 
 ######
 # TODO:
-#     - stay within one url, single page app. hash roomname and #
 #     - owner can kill room
+#     - hide chat in home room
+#     - fix username check
 #     - format current room using bootstrap
 #     - format date nicely
 #     - format page nicely
@@ -40,9 +41,8 @@ socketio = SocketIO(app)
 # contains roomname as as {string roomName : Object room}
 roomsDict = {} 
 
-# dict to hold usernames & id (TODO: id may not be needed)
+# dict to hold usernames to stop duplicates
 usernames = {}
-userId = 0
 
 ###################
 ##    ROUTES     ##
@@ -52,34 +52,25 @@ userId = 0
 def index():
     return render_template("index.html")
 
-@app.route('/username')
+@app.route('/username') 
 def username():
     return render_template("username.html")
-
-@app.route('/rooms/<string:roomName>')
-def goToRoom(roomName):
-    return render_template("room.html", roomName=roomName)
-
 
 ##########################
 ##  Username Socket Actions  ##
 ##########################
 
 # return true if username does not already exist, create user and thhen false if it does
-@socketio.on('does username exist')
+@socketio.on('add user')
 def checkUsername(username):
     if username in usernames.values():
-        return True
+        return False
     else:
         global userId 
         usernames[userId] = username
-        userId += 1
-        return False
+        return True
 
-# Send user to the create username page if there's no username in localstorage
-@socketio.on('no username')
-def createUsername():
-    return render_template("username.html")
+
 
 ##########################
 ##  Room Actions  ##
@@ -94,6 +85,7 @@ def showRooms():
 
 @socketio.on('does room exist')
 # used to check if a room exists. Called both on load and periodically
+# roomName is string
 def doesRoomExist(roomName):
     if roomName in roomsDict.keys():
         return True
@@ -101,8 +93,9 @@ def doesRoomExist(roomName):
 
 @socketio.on('create room')
 # only called when existing room check has previously been made, so can assume room doesn't exist
+# json is in the form {roomName: roonmName, username: username}
 def createRoom(json):
-    roomName = json['roomName']
+    roomName = json['roomName'] 
     username = json['username']
 
     # create room object
@@ -110,29 +103,38 @@ def createRoom(json):
 
     # add roomname to roomslist dict & broadcast new room for list
     roomsDict[roomName] = newRoom
-    emit('update room list', broadcast=True)
-    # TODO BROADCAST ROOM UPATE
+    emit('update room list', showRooms(), broadcast=True)
+    emit('now join room', roomName)
 
+    
 @socketio.on('join room')
+# data is strings in the form {roomName: roomName, username: username, oldRoomName: oldRoomName}
 def joinRoom(data):
-    join_room(data['roomName'])
-    send(data['username'] + " has entered the room.", room=data['roomName'])
+    username = data['username']
+    oldRoom = data['oldRoomName']
+    newRoom = data['roomName']
+    newRoomObject = roomsDict[newRoom]
+    
+    # skip the leaving stuff if it's home room
+    if (data['oldRoomName'] != "home"): 
+        oldRoomObject = roomsDict[oldRoom]
+        send(username + " has left the room", room=oldRoom)
+        oldRoomObject.removeUser(username)
+        leave_room(oldRoom)
+        emit('update room users', oldRoomObject.getUsers(), room=oldRoom)
+
+    join_room(newRoom)
+    newRoomObject.addUser(username)
+    emit('update room users', newRoomObject.getUsers(), room=newRoom)
+    send(username + " has entered the room.", room=newRoom)
+    emit('joined room', data, room=newRoom)
+    emit('update room list', showRooms())
+    emit('get all chat lines', roomsDict[newRoom].getChatsList())
+
 
 ##########################
 ##  Chat Line Socket Actions  ##
 ##########################
-
-@socketio.on('show current chats')
-def showCurrentChats(room):
-    # get room object
-    # currentRoom = roomsDict[room['data']]
-
-    # get all chats from room
-    list = roomsDict[room['data']].getChatsList() 
-
-    # TODO get chats for room
-    # emit('get all', {'data': chatsList})
-    return list
 
 @socketio.on('new chat')
 # data is a dict in the form {'username': username, 'chat': newLine, 'roomName': roomName}
@@ -145,3 +147,7 @@ def appendChat(data):
 
     # Broadcast clients in room to append the new line, rather than re-do whole list each time
     emit('new line', list(currentRoom.getLastChatLine()), room=data['roomName'])
+
+
+if __name__ == "__main__":
+    socketio.run(app, debug=True)

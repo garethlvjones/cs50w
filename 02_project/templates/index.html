@@ -1,54 +1,70 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <title>{% block title %}Flack{% endblock %}</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <meta charset="utf-8">
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css" integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy" crossorigin="anonymous">
 
-        <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-        <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js" integrity="sha256-yr4fRk/GU1ehYJPAs8P4JlTgu0Hdsp4ZKrx8bDEDC3I=" crossorigin="anonymous"></script>
-        <script src="{{ url_for('static', filename='common.js') }}"></script>
+<head>
+    <title>Flack</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css"
+        integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy" crossorigin="anonymous">
 
-        {% block head %}
-        {% endblock %}
-        
-    </head>
-    <body>
-    {% block top_container %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"
+        integrity="sha256-yr4fRk/GU1ehYJPAs8P4JlTgu0Hdsp4ZKrx8bDEDC3I=" crossorigin="anonymous"></script>
+    <script src="{{ url_for('static', filename='index.js') }}"></script>
+
+</head>
+
+<body>
     <div class="container-fluid border">
         <div class="row">
-            <div class="col-sm-8"><h1>Flack</h1></div>
+            <div class="col-sm-8">
+                <h1>Flack</h1>
+            </div>
             <div class="col-sm-4">
-                <div id="helloUsername"></div> 
+                <div id="helloUsername"></div>
                 <button class="btn btn-link" id="killUsername">Kill name</button>
             </div>
         </div>
     </div>
-    {% endblock %}
 
-    {% block nav %}
     <div class="wrapper">
-
         <!-- Sidebar -->
-        <nav id="sidebar" class="border flex-column">
-            <ul id="rooms-list" class="list-group list-group-flush"></ul>
-            
-            <!-- input new room list -->
-            <form id="new-room">
-                <input id="room-name" autocomplete="off" autofocus placeholder="Choose Room Name" type="text">
-                <input id="room-name-button" type="submit" value="Create">
-            </form>
+        <nav id="sidebar" class="border flex-column nav-pills nav-fill">
+            <ul id="rooms-list" class="list-group list-group-flush nav-pills"></ul>
+
+            <div class="fixed-bottom">
+                <!-- input new room list -->
+                <form id="new-room">
+                    <input id="room-name" autocomplete="off" autofocus placeholder="Choose Room Name" type="text">
+                    <input id="room-name-button" type="submit" value="Create">
+                </form>
+            </div>
         </nav>
-        {% endblock %}
 
-        {% block body %}
+        <!-- Body stuff goes here -->
+        <div class="container-fluid">
+            <div class="row">
+                <h3 id="roomName">Home Room</h3>
+                <br /><br />
+                <ul id="chat-list">
+                    <!-- will be filled with chat lines -->
+                </ul>
+            </div>
 
-        {% endblock %}
-    </div> <!-- close wrapper -->
-        
+            <div class="row">
+                <form id="chat">
+                    <input id="chat-out" autocomplete="off" autofocus placeholder="Enter message" type="text">
+                    <input id="chat-form-button" type="submit" value="Speak it">
+                </form>
+            </div>
 
+            <h6>Room User List</h6>
+            <ul id="users"></ul>
 
+            <div id="joiner" class="container-fluid"></div>
+        </div> <!-- close wrapper -->
 
-    </body>
+</body>
+
 </html>

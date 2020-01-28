@@ -7,6 +7,8 @@ class Room:
         self.creator = creator
         self.timeCreated = int(time.time() * 1000)
         self.chatsList = []
+        self.userList = []
+        
     
     # add a new chat line
     # ChatDetail dict will contain 'username', 'chat' values
@@ -24,13 +26,14 @@ class Room:
     def getLastChatLine(self):
         return self.chatsList[-1]
 
-    def getChatsPastThisTime(self, time):
-        # time is in javascript format
-        
-# iterate backwards through list to get number which is equal OR lower. get n. get length
+    def addUser(self, user):
+        self.userList.append(user)
 
+    def removeUser(self, user):
+        self.userList.remove(user)
 
-        return 1
+    def getUsers(self):
+        return self.userList
 
     def getName(self):
         return self.name
